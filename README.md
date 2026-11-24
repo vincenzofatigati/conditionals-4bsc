@@ -1,11 +1,5 @@
-# conditionals-4bsc
-Allenamento interattivo sul periodo ipotetico inglese (zero, first, second, third conditional, unless/in case/even if, I wish/If only) per la 4BSC. Scheda di sintesi, trucchi anti-errore ed esercizi a livelli con aiuto e correzione immediata.
-
 # Conditionals · 4BSC
-
-Sito di ripasso e allenamento sul periodo ipotetico inglese (Unit 6 – Healthy living).
-
-**Apri il sito:** https://TUONOME.github.io/conditionals-4bsc/
+Allenamento interattivo sul periodo ipotetico inglese (zero, first, second, third conditional, unless/in case/even if, I wish/If only) per la 4BSC. Scheda di sintesi, trucchi anti-errore ed esercizi a livelli con aiuto e correzione immediata.
 
 ## Cosa contiene
 - **Scheda**: il "termometro della realtà" con la stessa frase nei quattro tipi, le 3 domande per riconoscerli, le formule, il confronto con l'italiano, i connettivi e I wish / If only.

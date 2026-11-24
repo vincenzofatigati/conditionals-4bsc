@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditionals 4BSC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm, clear, encouraging; a patient tutor, never a test.
+   IDEA: a "reality dial" — the same sentence slides from always-true to impossible.
+   PICTURE: the dial with four stops and the sentence morphing, verbs colour-coded.
+   COLOUR and TYPE: four fixed colours, one per conditional, used everywhere; Atkinson Hyperlegible + Lexend.
+   LAYOUT: tabs Scheda / Trucchi / Allenati; one item at a time in practice; big targets. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#14161b);--ink:light-dark(#1b1d24,#eef0f4);--mut:light-dark(#5a6070,#a9afbd);
+--line:light-dark(#dfe3ea,#2c3039);--card:light-dark(#f5f7fa,#1d2027);--hd:light-dark(#2c5c7c,#1f3d52);
+--z:light-dark(#137480,#5cc6d3);--f:light-dark(#b85608,#ffa857);--s:light-dark(#a82c66,#f27fb4);--t:light-dark(#3a3e9c,#a3a8ff);
+--ok:light-dark(#1f7a3a,#6fd08f);--no:light-dark(#b3261e,#ff8a80);--fs:18px;--ls:0}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:var(--fs)/1.6 "Atkinson Hyperlegible",Verdana,system-ui,sans-serif;letter-spacing:var(--ls);overflow-x:clip}
+body.spaced{--ls:.04em;word-spacing:.12em}
+h1,h2,h3{font-family:Lexend,system-ui,sans-serif;line-height:1.15;margin:0 0 .4em;text-wrap:balance}
+h1{font-size:clamp(28px,5vw,44px)}h2{font-size:clamp(24px,3.6vw,34px)}h3{font-size:21px}
+b{font-weight:700}
+.wrap{max-width:1100px;margin:0 auto;padding:0 max(4vw,16px)}
+header{background:var(--hd);color:#fff;position:sticky;top:0;z-index:5}
+.bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding-block:10px}
+.brand{font:700 20px Lexend,sans-serif;margin-right:auto}.brand small{font-weight:500;opacity:.8;margin-left:6px}
+nav{display:flex;gap:6px;flex-wrap:wrap}
+nav a,.tool{color:#fff;text-decoration:none;padding:10px 16px;border-radius:999px;font-weight:700;min-height:44px;display:inline-flex;align-items:center;border:2px solid transparent;background:none;font:inherit;font-weight:700;cursor:pointer}
+nav a[aria-current=page]{background:#fff;color:#1f3d52}
+.tool{border-color:#ffffff55;padding:8px 12px;font-size:16px}
+section.view{display:none;padding-block:28px 60px}section.view.on{display:block}
+.z{--c:var(--z)}.f{--c:var(--f)}.s{--c:var(--s)}.t{--c:var(--t)}
+.vz{color:var(--z)}.vf{color:var(--f)}.vs{color:var(--s)}.vt{color:var(--t)}
+/* dial */
+.dial{background:var(--card);border-radius:20px;padding:clamp(16px,3vw,32px);margin:18px 0 30px}
+.stops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;position:relative}
+.stops::before{content:"";position:absolute;left:4%;right:4%;top:22px;height:8px;border-radius:8px;background:linear-gradient(90deg,var(--z),var(--f),var(--s),var(--t))}
+.stop{position:relative;background:none;border:0;color:var(--ink);font:inherit;cursor:pointer;padding:0 2px 6px;text-align:center;min-height:44px}
+.stop i{display:block;width:52px;height:52px;margin:0 auto 6px;border-radius:50%;background:var(--bg);border:6px solid var(--c);transition:transform .25s}
+.stop[aria-pressed=true] i{background:var(--c);transform:scale(1.15)}
+.stop strong{display:block;color:var(--c);font-family:Lexend,sans-serif}
+.stop span{font-size:15px;color:var(--mut)}
+.sent{margin-top:22px;border-left:10px solid var(--c);background:var(--bg);border-radius:14px;padding:18px 20px}
+.sent .en{font-size:clamp(22px,3.6vw,32px);font-weight:700;line-height:1.3}
+.sent .en b{color:var(--c);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:5px}
+.sent .it{color:var(--mut);margin-top:6px}
+.formula{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.chip{display:inline-block;padding:4px 12px;border-radius:10px;background:color-mix(in srgb,var(--c) 16%,transparent);border:2px solid var(--c);font-weight:700;white-space:nowrap}
+.chip.m{border-style:dashed}
+@media (prefers-reduced-motion:reduce){.stop i{transition:none}}
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.card{background:var(--card);border-radius:16px;padding:18px 20px;border-top:8px solid var(--c,var(--line))}
+.card h3{color:var(--c,var(--ink))}
+.card .use{font-weight:700}
+.ex{font-style:italic;margin:.5em 0}.ex b{color:var(--c);font-style:normal}
+.muted{color:var(--mut)}
+.tree{display:grid;gap:10px;margin:16px 0 30px}
+.q{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--card);border-radius:14px;padding:14px 18px}
+.q .ans{font-weight:700;white-space:nowrap;padding:8px 14px;border-radius:10px;color:#fff;background:var(--c)}
+:root[data-theme=dark] .q .ans{color:#14161b}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .q .ans{color:#14161b}}
+table{border-collapse:collapse;width:100%;background:var(--card);border-radius:14px;overflow:hidden}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:Lexend,sans-serif;font-weight:500}
+.trick{background:var(--card);border-radius:16px;padding:18px 20px}
+.trick .no{color:var(--no)}.trick .yes{color:var(--ok)}
+.trick p{margin:.35em 0}
+.badge{display:inline-block;font:700 14px Lexend,sans-serif;background:var(--hd);color:#fff;border-radius:8px;padding:2px 10px;margin-bottom:8px}
+/* practice */
+.lv{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--card);border:3px solid transparent;border-radius:16px;padding:16px 18px;font:inherit;color:var(--ink);cursor:pointer;min-height:44px}
+.lv:hover,.lv:focus-visible{border-color:var(--hd)}
+.lv .n{font:700 14px Lexend,sans-serif;color:var(--mut)}
+.lv h3{margin:0}
+.stars{display:flex;gap:3px}.stars svg{width:22px;height:22px}
+.player{max-width:760px;margin:0 auto}
+.top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.prog{flex:1 1 200px;height:12px;background:var(--card);border-radius:12px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--hd);transition:width .3s}
+.instr{background:var(--card);border-radius:12px;padding:10px 14px;margin-bottom:14px}
+.ctx{color:var(--mut);font-style:italic;margin-bottom:6px}
+.prompt{font-size:clamp(22px,3.4vw,28px);font-weight:700;line-height:1.4;display:flex;gap:12px;align-items:flex-start;margin:8px 0 18px}
+.prompt .txt{flex:1}
+.gap{display:inline-block;min-width:4.5em;border-bottom:4px solid var(--hd);margin:0 4px}
+mark{background:color-mix(in srgb,var(--f) 30%,transparent);color:inherit;padding:0 4px;border-radius:6px;outline:3px solid var(--f)}
+.say{flex:none;width:48px;height:48px;border-radius:50%;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;display:grid;place-items:center}
+.say svg{width:24px;height:24px}
+.opts{display:grid;gap:10px}
+.opt{font:inherit;font-weight:700;text-align:left;padding:14px 18px;min-height:56px;border-radius:14px;border:3px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;display:flex;gap:12px;align-items:center}
+.opt kbd{font:700 14px Lexend,sans-serif;background:var(--card);border-radius:6px;padding:2px 8px;color:var(--mut)}
+.opt.typ{border-color:var(--c);color:var(--c)}
+.opt:hover:not(:disabled){border-color:var(--hd)}
+.opt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.opt.bad{border-color:var(--no);background:color-mix(in srgb,var(--no) 10%,transparent);text-decoration:line-through}
+.opt:disabled{cursor:default}
+.toks{display:flex;flex-wrap:wrap;gap:8px}
+.tok{font:inherit;font-size:22px;font-weight:700;padding:8px 12px;min-height:48px;border-radius:10px;border:2px dashed var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.tok.good{border:3px solid var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.tok.bad{border:3px solid var(--no)}
+.inrow{display:flex;gap:10px;flex-wrap:wrap}
+input[type=text]{font:inherit;font-size:20px;padding:12px 14px;border-radius:12px;border:3px solid var(--line);background:var(--bg);color:var(--ink);flex:1 1 220px;min-height:52px}
+.btn{font:inherit;font-weight:700;padding:12px 22px;min-height:52px;border-radius:12px;border:0;background:var(--hd);color:#fff;cursor:pointer}
+.btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line)}
+:focus-visible{outline:3px solid var(--f);outline-offset:2px}
+.fb{margin-top:16px;border-radius:14px;padding:14px 18px;display:none}
+.fb.on{display:block}
+.fb.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);border:2px solid var(--ok)}
+.fb.hint{background:color-mix(in srgb,var(--f) 14%,transparent);border:2px solid var(--f)}
+.fb.no{background:color-mix(in srgb,var(--no) 10%,transparent);border:2px solid var(--no)}
+.fb h4{margin:0 0 4px;font-family:Lexend,sans-serif;font-size:19px}
+.next{margin-top:16px;display:none}.next.on{display:inline-flex}
+.res{text-align:center}.res .big{font:700 clamp(48px,9vw,80px) Lexend,sans-serif}
+.res .stars{justify-content:center}.res .stars svg{width:48px;height:48px}
+.rev{text-align:left;margin-top:20px}.rev li{margin-bottom:10px}
+@media(max-width:600px){:root{--fs:17px}header{position:static}nav a,.tool{padding:8px 12px}.stop span{display:none}.stop i{width:40px;height:40px}.stops::before{top:16px}.q{grid-template-columns:1fr}table{font-size:15px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;font-weight:700}}
+@media print{header,#allenati,.say{display:none!important}section.view{display:block!important;padding:0}body{--fs:13px}.dial{break-inside:avoid}.card,.trick{break-inside:avoid}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header><div class="wrap bar">
+  <div class="brand">Conditionals <small>4BSC · Unit 6</small></div>
+  <nav aria-label="Sezioni">
+    <a href="#scheda">Scheda</a><a href="#trucchi">Trucchi</a><a href="#allenati">Allenati</a>
+  </nav>
+  <button class="tool" id="bigger" aria-label="Testo più grande">A+</button>
+  <button class="tool" id="smaller" aria-label="Testo più piccolo">A−</button>
+  <button class="tool" id="space" aria-pressed="false">Spaziatura</button>
+</div></header>
+
+<main class="wrap">
+<!-- ============ SCHEDA ============ -->
+<section class="view" id="scheda">
+  <h1>Quanto è reale quello che dico?</h1>
+  <p>Il periodo ipotetico inglese è un <b>termometro della realtà</b>. Stessa frase, quattro gradi: più la situazione è lontana dalla realtà, più i verbi “vanno indietro” nel tempo. Tocca i pallini.</p>
+
+  <div class="dial">
+    <div class="stops" role="group" aria-label="Scegli il tipo di periodo ipotetico">
+      <button class="stop z" data-k="0" aria-pressed="true"><i></i><strong>Zero</strong><span>sempre vero</span></button>
+      <button class="stop f" data-k="1" aria-pressed="false"><i></i><strong>First</strong><span>possibile, futuro</span></button>
+      <button class="stop s" data-k="2" aria-pressed="false"><i></i><strong>Second</strong><span>immaginario, ora</span></button>
+      <button class="stop t" data-k="3" aria-pressed="false"><i></i><strong>Third</strong><span>impossibile, passato</span></button>
+    </div>
+    <div class="sent z" id="sent" aria-live="polite"></div>
+  </div>
+
+  <h2>Le 3 domande per non sbagliare mai</h2>
+  <p class="muted">Leggi la frase e fai le domande in quest'ordine. Alla prima risposta “sì”, ti fermi.</p>
+  <div class="tree">
+    <div class="q t"><div><b>1.</b> Parla del <b>passato</b>, di qualcosa che ormai <b>non si può più cambiare</b>?</div><div class="ans">Sì → Third</div></div>
+    <div class="q s"><div><b>2.</b> È una situazione <b>immaginaria</b> o <b>poco probabile</b> adesso/in futuro? (sogni, consigli “If I were you”)</div><div class="ans">Sì → Second</div></div>
+    <div class="q z"><div><b>3.</b> È <b>sempre vero</b>? (scienza, regole, abitudini: posso dire <i>when</i> al posto di <i>if</i>)</div><div class="ans">Sì → Zero</div></div>
+    <div class="q f"><div><b>4.</b> Nessuno dei tre? Allora è una cosa <b>possibile e probabile nel futuro</b>.</div><div class="ans">→ First</div></div>
+  </div>
+
+  <h2>La forma: if-clause + main clause</h2>
+  <div class="grid">
+    <div class="card z"><h3>Zero conditional</h3>
+      <div class="formula"><span class="chip">if + present simple</span><span class="chip m">present simple</span></div>
+      <p class="use">Cose sempre vere.</p>
+      <p class="ex">If you <b>walk</b> in the rain without an umbrella, you <b>get</b> wet.</p>
+      <p class="muted">Italiano: se + presente, presente.</p></div>
+    <div class="card f"><h3>First conditional</h3>
+      <div class="formula"><span class="chip">if + present simple</span><span class="chip m">will / won't + base</span></div>
+      <p class="use">Futuro possibile e probabile.</p>
+      <p class="ex">If you <b>eat</b> junk food, you <b>will put</b> on weight.</p>
+      <p class="muted">Italiano: se mangerai… ingrasserai.</p></div>
+    <div class="card s"><h3>Second conditional</h3>
+      <div class="formula"><span class="chip">if + past simple</span><span class="chip m">would / wouldn't + base</span></div>
+      <p class="use">Immaginario o improbabile, nel presente o futuro.</p>
+      <p class="ex">If I <b>were</b> you, I<b>'d drink</b> more water.</p>
+      <p class="muted">Italiano: congiuntivo imperfetto + condizionale presente (se fossi… berrei).</p></div>
+    <div class="card t"><h3>Third conditional</h3>
+      <div class="formula"><span class="chip">if + past perfect</span><span class="chip m">would have + participio</span></div>
+      <p class="use">Passato che non si può cambiare: rimpianti, critiche.</p>
+      <p class="ex">If she<b>'d got</b> more sleep, her times <b>would have been</b> faster.</p>
+      <p class="muted">Italiano: congiuntivo trapassato + condizionale passato (se avesse dormito… sarebbero stati).</p></div>
+  </div>
+  <p class="muted" style="margin-top:12px">Virgola: <b>If</b> all'inizio → virgola. <b>If</b> a metà frase → niente virgola. <i>You have to study hard if you want to become a doctor.</i></p>
+
+  <h2 style="margin-top:34px">Le parole al posto di “if”</h2>
+  <table class="stack">
+    <thead><tr><th>Parola</th><th>Significa</th><th>Esempio</th></tr></thead>
+    <tbody>
+      <tr><td><b>unless</b></td><td>if… not, a meno che</td><td><i>We won't swim unless the pool is open.</i></td></tr>
+      <tr><td><b>as long as / provided (that) / only if</b></td><td>a condizione che</td><td><i>We'll swim as long as the pool is open.</i></td></tr>
+      <tr><td><b>in case</b></td><td>nel caso in cui (per precauzione, lo faccio prima)</td><td><i>Take your swimming costume in case the pool is open.</i></td></tr>
+      <tr><td><b>even if</b></td><td>anche se (ipotesi, non è vero)</td><td><i>Even if I didn't have the flu, I wouldn't go out.</i></td></tr>
+      <tr><td><b>even though</b></td><td>anche se (è vero, di fatto)</td><td><i>Even though you hurt me, I forgive you.</i></td></tr>
+      <tr><td><b>when, as soon as, until, before, after, once</b></td><td>tempo: solo con zero e first</td><td><i>I'll text you as soon as I arrive.</i></td></tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:34px">I wish / If only</h2>
+  <table class="stack">
+    <thead><tr><th>Forma</th><th>Quando</th><th>Esempio</th></tr></thead>
+    <tbody>
+      <tr><td><b>wish + past simple</b> (anche could)</td><td>vorrei che <b>adesso</b> fosse diverso</td><td><i>I wish I could play tennis.</i></td></tr>
+      <tr><td><b>wish + past perfect</b></td><td><b>rimpianto</b> per il passato</td><td><i>If only I hadn't spent all my money.</i></td></tr>
+      <tr><td><b>wish + would + base</b></td><td>critico l'<b>abitudine di qualcun altro</b></td><td><i>I wish my children would eat a balanced diet.</i></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ TRUCCHI ============ -->
+<section class="view" id="trucchi">
+  <h1>I trucchi che fanno la differenza</h1>
+  <p>Gli errori più frequenti nelle verifiche sono sempre gli stessi. Eccoli, con la frase sbagliata e quella giusta.</p>
+  <div class="grid" id="tricks"></div>
+</section>
+
+<!-- ============ ALLENATI ============ -->
+<section class="view" id="allenati">
+  <div id="menu">
+    <h1>Allenati, un passo alla volta</h1>
+    <p>Fai i livelli in ordine: si parte dal riconoscere e si arriva a scrivere. <b>Hai due tentativi</b>: al primo errore arriva un aiuto. Il pulsante con l'altoparlante legge la frase in inglese.</p>
+    <div class="grid" id="levels"></div>
+  </div>
+  <div class="player" id="player" hidden></div>
+</section>
+</main>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=s=>esc(s).replace(/\*(.+?)\*/g,"<b>$1</b>").replace(/\[\[(.+?)\]\]/g,"<mark>$1</mark>").replace(/___/g,'<span class="gap" aria-label="spazio vuoto"></span>');
+const plain=s=>s.replace(/\*|\[\[|\]\]/g,"").replace(/___/g,"…");
+const K=["z","f","s","t"],KN=["Zero","First","Second","Third"];
+
+/* ---------- reality dial ---------- */
+const DIAL=[
+ {en:"If you *eat* junk food, you *put on* weight.",it:"Se mangi cibo spazzatura, ingrassi. È una regola: succede sempre.",f:["if + present simple","present simple"]},
+ {en:"If you *eat* junk food, you*'ll put on* weight.",it:"Se mangerai cibo spazzatura, ingrasserai. È possibile, può succedere davvero.",f:["if + present simple","will + base"]},
+ {en:"If you *ate* junk food, you*'d put on* weight.",it:"Se mangiassi cibo spazzatura, ingrasseresti. Ma non lo fai: è immaginario.",f:["if + past simple","would + base"]},
+ {en:"If you *had eaten* junk food, you*'d have put on* weight.",it:"Se avessi mangiato cibo spazzatura, saresti ingrassato. Ormai è passato: impossibile cambiarlo.",f:["if + past perfect","would have + participio"]}];
+const setDial=k=>{
+  document.querySelectorAll(".stop").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k==k));
+  const d=DIAL[k],el=$("#sent");el.className="sent "+K[k];
+  el.innerHTML=`<div class="en">${fmt(d.en)}</div><div class="it">${esc(d.it)}</div><div class="formula"><span class="chip">${esc(d.f[0])}</span><span class="chip m">${esc(d.f[1])}</span></div>`;
+};
+document.querySelectorAll(".stop").forEach(b=>b.addEventListener("click",()=>setDial(+b.dataset.k)));
+setDial(0);
+
+/* ---------- tricks ---------- */
+const TR=[
+ ["Mai will dopo if","Nella frase con <b>if</b> non metti mai <b>will</b> o <b>would</b>. Vanno solo nell'altra metà.","If it will rain, we'll stay home.","If it <b>rains</b>, we'll stay home."],
+ ["Il trucco del 'd","<b>'d</b> può essere <b>would</b> o <b>had</b>. Guarda la parola dopo: verbo base o <i>have</i> → would. Participio (got, told, eaten) → had.","If she'd got more sleep → she <i>would</i> got?","If she <b>had</b> got more sleep, she <b>would</b> have been faster."],
+ ["Il passato che parla del presente","Nel second il past simple <b>non indica il passato</b>: indica “lontano dalla realtà”.","If I had money now… = ieri?","If I <b>had</b> money (adesso, ma non ce l'ho), I'd buy a bike."],
+ ["Were per tutti","Nel second usa <b>were</b> anche con I, he, she, it. <i>Was</i> si sente nel parlato, ma in verifica scrivi <i>were</i>.","If I was you, I'd see a doctor.","If I <b>were</b> you, I'd see a doctor."],
+ ["Third: tutto un passo indietro","Due “have”: <b>had</b> + participio dopo if, <b>would have</b> + participio nell'altra parte.","If they would have trained, they would win.","If they <b>had trained</b>, they <b>would have won</b>."],
+ ["Zero o first?","Se puoi dire <b>when</b> senza cambiare il senso ed è sempre vero → zero. Se parli di una volta precisa nel futuro → first.","If you heat ice, it will melt. (regola)","If you heat ice, it <b>melts</b>."],
+ ["Unless = if not","<i>Unless</i> contiene già il “non”. Niente doppia negazione.","Unless you don't hurry, you'll miss the bus.","Unless you <b>hurry</b>, you'll miss the bus."],
+ ["Even if o even though?","<b>Even if</b>: ipotesi, non è vero. <b>Even though</b>: è vero, è un fatto.","Even though I had a million euros… (non li ho)","<b>Even if</b> I had a million euros, I'd keep studying."],
+ ["In case non è if","<b>In case</b> = faccio una cosa prima, per precauzione. <b>If</b> = la faccio solo se succede.","Take an umbrella if it rains. (prima di uscire?)","Take an umbrella <b>in case</b> it rains."],
+ ["When, as soon as, until: niente will","Dopo le parole di tempo usi il presente anche se parli del futuro.","I'll call you when I will arrive.","I'll call you when I <b>arrive</b>."],
+ ["Could e might","Al posto di <b>would</b> puoi usare <b>could</b> (potrei) o <b>might</b> (forse).","If we went to the beach, we will can swim.","If we went to the beach, we <b>could</b> swim."],
+ ["I wish: tre forme","Adesso → past simple. Rimpianto → past perfect. Abitudine di altri che mi dà fastidio → would. Mai <i>I wish I would</i>.","I wish I can swim. / I wish I would be taller.","I wish I <b>could</b> swim. / I wish I <b>were</b> taller."]];
+$("#tricks").innerHTML=TR.map((t,i)=>`<div class="trick"><span class="badge">Trucco ${i+1}</span><h3>${t[0]}</h3><p>${t[1]}</p><p class="no">✗ <i>${t[2]}</i></p><p class="yes">✓ <i>${t[3]}</i></p></div>`).join("");
+
+/* ---------- levels ---------- */
+const L=[
+ {t:"Riconosci il tipo",d:"Guarda i verbi e scegli: zero, first, second o third.",k:"c",fixed:1,opts:KN,
+  ins:"Che tipo di periodo ipotetico è? Guarda i verbi in grassetto.",
+  h:"Usa le 3 domande: passato impossibile? → Third. Immaginario? → Second. Sempre vero? → Zero. Altrimenti → First.",
+  items:[
+   {p:"If you *heat* ice, it *melts*.",a:0,w:"Present + present, ed è sempre vero (scienza) → Zero."},
+   {p:"If you *study* tonight, you*'ll pass* the test.",a:1,w:"Present + will: è possibile nel futuro → First."},
+   {p:"If I *were* a doctor, I *would help* everyone.",a:2,w:"Past simple + would: non sono un medico, è immaginario → Second."},
+   {p:"If she *had slept* more, she *would have run* faster.",a:3,w:"Past perfect + would have: il passato non si cambia → Third."},
+   {p:"If you *don't drink*, you *die*.",a:0,w:"Present + present: vale sempre → Zero."},
+   {p:"If they *won* the lottery, they*'d buy* a house.",a:2,w:"Won (past simple) + 'd buy (would): è improbabile → Second."},
+   {p:"We*'ll go* to the gym if it *stops* raining.",a:1,w:"Trucco: l'if sta a metà frase. Will + present → First."},
+   {p:"I *would have called* you if I *hadn't lost* my phone.",a:3,w:"Would have + past perfect → Third. Il telefono l'ho già perso."},
+   {p:"If you *mix* red and blue, you *get* purple.",a:0,w:"Una regola sempre vera → Zero."},
+   {p:"If he *trained* harder, he *could win* the race.",a:2,w:"Past simple + could (= would be able to) → Second."}]},
+ {t:"Unisci le due metà",d:"Scegli la seconda parte che si abbina.",k:"c",
+  ins:"Scegli la parte che completa la frase in modo corretto.",
+  h:"Guarda il verbo della prima metà: present → present o will. Past simple → would. Past perfect → would have.",
+  items:[
+   {p:"If I *were* you, …",o:["I'd see a doctor.","I'll see a doctor.","I'd have seen a doctor."],a:0,w:"Were = Second → would + base: I'd see."},
+   {p:"If you *eat* too much sugar, …",o:["your teeth will get worse.","your teeth would have got worse.","your teeth will got worse."],a:0,w:"Present → will + verbo base (get, non got)."},
+   {p:"If she *had taken* the syrup, …",o:["her cough would have stopped.","her cough will stop.","her cough would stop."],a:0,w:"Had taken = Third → would have + participio."},
+   {p:"If we *had* more free time, …",o:["we would do more sport.","we will do more sport.","we would have done more sport."],a:0,w:"Had (past simple, adesso) = Second → would + base."},
+   {p:"If you *walk* in the rain without an umbrella, …",o:["you get wet.","you got wet.","you would get wet."],a:0,w:"È sempre vero → Zero: present + present."},
+   {p:"If they *hadn't changed* their coach, …",o:["they wouldn't have won.","they won't win.","they don't win."],a:0,w:"Hadn't changed = Third → wouldn't have + participio."},
+   {p:"If it*'s* sunny tomorrow, …",o:["we'll go cycling.","we'd gone cycling.","we went cycling."],a:0,w:"Tomorrow + present → First: will."},
+   {p:"I*'d go* out tonight …",o:["if I weren't so tired.","if I won't be so tired.","if I am not so tired."],a:0,w:"Qui hai già 'd go (would) → l'altra metà vuole il past simple: weren't."}]},
+ {t:"Scegli il verbo giusto",d:"Completa con la forma corretta.",k:"c",
+  ins:"Quale forma completa lo spazio?",
+  h:"Prima capisci il tipo (le 3 domande), poi applica la formula. Ricorda: mai will dopo if.",
+  items:[
+   {p:"If I ___ you, I'd drink more water.",o:["were","am","will be"],a:0,w:"Second, consiglio: If I were you."},
+   {p:"If you ___ regular exercise, you'll be fitter.",o:["do","will do","did"],a:0,w:"First: if + present simple. Mai will dopo if."},
+   {p:"If he ___ harder, he would have passed.",o:["had studied","studied","would study"],a:0,w:"Would have passed = Third → if + past perfect."},
+   {p:"If you ate less junk food, you ___ fitter.",o:["would be","will be","would have been"],a:0,w:"Ate = Second → would + base."},
+   {p:"If you don't water plants, they ___.",o:["die","would die","died"],a:0,w:"Sempre vero → Zero: present."},
+   {p:"If she had gone to bed earlier, she ___ so tired.",o:["wouldn't have felt","won't feel","doesn't feel"],a:0,w:"Had gone = Third → wouldn't have + participio."},
+   {p:"I'll call you as soon as I ___ home.",o:["get","will get","would get"],a:0,w:"Trucco: dopo as soon as usi il present, anche per il futuro."},
+   {p:"If it ___ tomorrow, we'll stay at home.",o:["rains","will rain","rained"],a:0,w:"First: if + present simple (rains)."},
+   {p:"What would you do if you ___ a million euros?",o:["had","have","would have"],a:0,w:"Would you do = Second → if + past simple: had."},
+   {p:"If they had trained more, they ___ the match.",o:["might have won","might win","will win"],a:0,w:"Third → might have + participio (forse avrebbero vinto)."}]},
+ {t:"Il trucco del 'd",d:"'d è would o had? Impara a capirlo al volo.",k:"c",fixed:1,opts:["would","had"],
+  ins:"La parte evidenziata è would o had?",
+  h:"Guarda la parola subito dopo 'd. Verbo base o have → would. Participio (got, told, trained, listened) → had.",
+  items:[
+   {p:"[[I'd drink]] more water.",a:0,w:"Dopo 'd c'è drink (verbo base) → would."},
+   {p:"If [[she'd got]] more sleep, she'd have been faster.",a:1,w:"Dopo 'd c'è got (participio) → had."},
+   {p:"If she'd got more sleep, [[she'd have]] been faster.",a:0,w:"Dopo 'd c'è have → would have."},
+   {p:"If [[you'd told]] me, I'd have helped you.",a:1,w:"Told è participio → had told (past perfect)."},
+   {p:"[[We'd go]] swimming if the pool were open.",a:0,w:"Go è verbo base → would go."},
+   {p:"If [[they'd trained]] harder, they would have won.",a:1,w:"Trained è participio → had trained."},
+   {p:"[[He'd have]] called a taxi.",a:0,w:"'d + have → would have."},
+   {p:"I wish [[you'd listened]] to me.",a:1,w:"Listened è participio → had listened: rimpianto."}]},
+ {t:"Scrivi tu il verbo",d:"Ora niente scelte: scrivi la forma giusta.",k:"w",
+  ins:"Scrivi la forma corretta del verbo tra parentesi.",
+  h:"Capisci il tipo, poi la formula. Puoi scrivere sia la forma lunga (would not) sia quella corta (wouldn't).",
+  items:[
+   {p:"If you ___ (eat) junk food, you'll put on weight.",a:["eat"],w:"First: if + present simple → eat."},
+   {p:"If I ___ (be) rich, I'd give money to charity.",a:["were"],al:{was:"Was si dice nel parlato, ma in verifica scrivi were."},w:"Second: If I were."},
+   {p:"If she ___ (drink) more water, her skin will be better.",a:["drinks"],al:{drink:"Ricorda la -s della terza persona: she drinks."},w:"First, terza persona: drinks."},
+   {p:"If we had left earlier, we ___ (not miss) the train.",a:["wouldn't have missed","would not have missed"],w:"Third: wouldn't have + participio (missed)."},
+   {p:"If you heat water to 100°C, it ___ (boil).",a:["boils"],al:{boil:"Ricorda la -s: it boils."},w:"Zero: present simple → boils."},
+   {p:"If he ___ (not lose) his phone, he would have called a taxi.",a:["hadn't lost","had not lost"],w:"Third: if + past perfect → hadn't lost."},
+   {p:"I ___ (help) you if I had more time.",a:["would help","'d help"],w:"Had (Second) → would + base: would help."},
+   {p:"If you follow a healthier diet, you ___ (feel) better.",a:["will feel","'ll feel"],w:"First: will + base → will feel."}]},
+ {t:"Unless, in case, even if…",d:"Le parole che sostituiscono if.",k:"c",
+  ins:"Scegli la parola o il verbo giusto.",
+  h:"Unless = if not. In case = per precauzione. Even if = ipotesi. Even though = è vero. Dopo le parole di tempo: present.",
+  items:[
+   {p:"We won't be able to swim ___ the pool is open.",o:["unless","if","in case"],a:0,w:"Unless = if… not: non nuoteremo se la piscina non è aperta."},
+   {p:"Take your umbrella ___ it rains.",o:["in case","unless","even though"],a:0,w:"Lo prendi prima, per precauzione → in case."},
+   {p:"___ I didn't have the flu, I wouldn't go out tonight.",o:["Even if","Even though","In case"],a:0,w:"Ipotesi non vera (ho l'influenza) → even if."},
+   {p:"___ you hurt me badly, I forgive you.",o:["Even though","Even if","Unless"],a:0,w:"È successo davvero → even though."},
+   {p:"You can borrow my bike ___ you bring it back tomorrow.",o:["as long as","unless","even though"],a:0,w:"A condizione che → as long as."},
+   {p:"I'll send you a message as soon as I ___.",o:["arrive","will arrive","arrived"],a:0,w:"Dopo as soon as: present simple."},
+   {p:"I'll wait ___ everyone arrives.",o:["until","unless","in case"],a:0,w:"Until = finché (tempo)."},
+   {p:"“Will you lend me some money?” “___ you pay me back.”",o:["Only if","Unless","Even though"],a:0,w:"Only if = solo a condizione che."},
+   {p:"You'll put on weight ___ you stop eating junk food.",o:["unless","if","as long as"],a:0,w:"Ingrasserai se NON smetti → unless."},
+   {p:"Unless you ___, you won't pass.",o:["study","don't study","won't study"],a:0,w:"Unless contiene già il “non”: unless you study."}]},
+ {t:"I wish / If only",d:"Desideri, rimpianti e critiche.",k:"c",
+  ins:"Leggi la situazione in italiano e completa il desiderio.",
+  h:"Adesso → past simple (were, had, could). Passato → past perfect (hadn't eaten). Abitudine di un altro → would.",
+  items:[
+   {ctx:"Sono basso. (adesso)",p:"I wish I ___ taller.",o:["were","am","had been"],a:0,w:"Desiderio sul presente → past simple: were."},
+   {ctx:"Lo scorso weekend ho speso tutti i soldi. (rimpianto)",p:"If only I ___ all my money.",o:["hadn't spent","didn't spend","wouldn't spend"],a:0,w:"Rimpianto sul passato → past perfect."},
+   {ctx:"Mio fratello lascia sempre i calzini per terra. Mi irrita.",p:"I wish he ___ up his socks.",o:["would pick","had picked","will pick"],a:0,w:"Critica un'abitudine di un altro → would + base."},
+   {ctx:"Non so giocare a tennis. (adesso)",p:"I wish I ___ play tennis.",o:["could","can","would"],a:0,w:"Presente, abilità → could."},
+   {ctx:"Non sono stato attento con l'iPad e si è rotto.",p:"I wish I ___ more careful.",o:["had been","were","would be"],a:0,w:"Rimpianto sul passato → had been."},
+   {ctx:"Il mio compagno non studia mai: è un'abitudine che mi fa arrabbiare.",p:"If only you ___ harder!",o:["would study","will study","had studied"],a:0,w:"Abitudine che vuoi cambiare → would study."},
+   {ctx:"Non ho la macchina. (adesso)",p:"I wish I ___ a car.",o:["had","have","would have"],a:0,w:"Presente → past simple: had."},
+   {ctx:"Ieri ho mangiato troppa torta.",p:"I wish I ___ so much cake.",o:["hadn't eaten","didn't eat","wouldn't eat"],a:0,w:"Ieri = passato → past perfect."}]},
+ {t:"Caccia all'errore",d:"C'è una parola sbagliata: trovala.",k:"x",
+  ins:"Tocca la parola sbagliata.",
+  h:"Controlla i trucchi: will dopo if? Doppia negazione con unless? Forma del third? Wish + can?",
+  items:[
+   {p:"If it will rain tomorrow, we'll stay home.",x:2,fix:"rains",w:"Mai will dopo if: If it rains tomorrow."},
+   {p:"If I was you, I'd see a doctor.",x:2,fix:"were",w:"Second: If I were you."},
+   {p:"If she had studied, she would has passed.",x:6,fix:"have",w:"Would have + participio: would have passed."},
+   {p:"Unless you don't hurry, you'll miss the bus.",x:2,fix:"(togli don't)",w:"Unless = if not: Unless you hurry."},
+   {p:"If you heat ice, it would melt.",x:5,fix:"melts",w:"Regola sempre vera → Zero: it melts."},
+   {p:"I wish I can swim.",x:3,fix:"could",w:"Wish + past: I wish I could swim."},
+   {p:"If they would have trained, they would have won.",x:2,fix:"had (trained)",w:"Dopo if niente would: If they had trained."},
+   {p:"I'll call you when I will arrive.",x:5,fix:"(togli will)",w:"Dopo when: present → when I arrive."},
+   {p:"If I had more money, I will buy a new bike.",x:6,fix:"would",w:"Had = Second → would buy."},
+   {p:"Even though I had a million euros, I wouldn't stop working.",x:1,fix:"if",w:"Non li hai: è un'ipotesi → Even if."}]}
+];
+L.forEach((lv,i)=>lv.items.forEach(it=>{it.lv=i}));
+L.push({t:"Sfida finale",d:"12 domande miste da tutti i livelli.",k:"mix",ins:"",h:"",items:[]});
+
+/* ---------- progress ---------- */
+let P={};try{P=JSON.parse(localStorage.getItem("cond4bsc")||"{}")}catch(e){}
+const saveP=()=>{try{localStorage.setItem("cond4bsc",JSON.stringify(P))}catch(e){}};
+const star=on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 21l1.6-7L2 9.2l7.1-.6z" fill="${on?"var(--f)":"none"}" stroke="var(--f)" stroke-width="1.6"/></svg>`;
+const stars=n=>`<div class="stars" aria-label="${n} stelle su 3">${star(n>0)+star(n>1)+star(n>2)}</div>`;
+const menu=()=>{
+  $("#levels").innerHTML=L.map((lv,i)=>`<button class="lv" data-i="${i}"><span class="n">${i<L.length-1?"Livello "+(i+1):"Finale"}</span><h3>${esc(lv.t)}</h3><span class="muted">${esc(lv.d)}</span>${stars(P[i]||0)}</button>`).join("");
+  document.querySelectorAll(".lv").forEach(b=>b.addEventListener("click",()=>start(+b.dataset.i)));
+};
+
+/* ---------- player ---------- */
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let S=null;
+const say=t=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plain(t));u.lang="en-GB";u.rate=.85;speechSynthesis.speak(u)}catch(e){}};
+const spk=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg>`;
+function start(i){
+  const lv=L[i];let items;
+  if(lv.k==="mix"){items=shuf(L.slice(0,-1).flatMap(l=>shuf(l.items).slice(0,l.k==="x"||l.k==="w"?2:1))).slice(0,12);while(items.length<12)items.push(shuf(L[2].items)[0])}
+  else items=shuf(lv.items);
+  S={lv:i,items,n:0,score:0,wrong:[]};
+  $("#menu").hidden=true;$("#player").hidden=false;show();scrollTo(0,0);
+}
+function show(){
+  const it=S.items[S.n],lv=L[it.lv],tot=S.items.length;S.tries=0;S.done=false;
+  let body="";
+  if(lv.k==="c"){
+    const o=lv.fixed?lv.opts.map((t,j)=>({t,j})):shuf(it.o.map((t,j)=>({t,j})));
+    body=`<div class="opts">${o.map((x,n)=>`<button class="opt ${lv.fixed&&lv.opts===KN?"typ "+K[x.j]:""}" data-j="${x.j}"><kbd>${n+1}</kbd>${esc(x.t)}</button>`).join("")}</div>`;
+  }else if(lv.k==="w"){
+    body=`<form class="inrow" id="wf"><input type="text" id="win" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="La tua risposta"><button class="btn">Controlla</button></form>`;
+  }else{
+    body=`<div class="toks">${it.p.split(" ").map((w,n)=>`<button class="tok" data-n="${n}">${esc(w)}</button>`).join("")}</div>`;
+  }
+  $("#player").innerHTML=`
+   <div class="top"><button class="btn ghost" id="back">← Livelli</button><div class="prog" aria-hidden="true"><i style="width:${S.n/tot*100}%"></i></div><b>${S.n+1} / ${tot}</b></div>
+   <h2>${esc(L[S.lv].t)}</h2>
+   <div class="instr">${esc(lv.ins)}</div>
+   ${it.ctx?`<div class="ctx">${esc(it.ctx)}</div>`:""}
+   ${lv.k==="x"?"":`<div class="prompt"><div class="txt">${fmt(it.p)}</div><button class="say" aria-label="Ascolta la frase">${spk}</button></div>`}
+   ${lv.k==="x"?`<div class="prompt"><div class="txt muted" style="font-size:18px;font-weight:400">Ascolta e tocca la parola sbagliata</div><button class="say" aria-label="Ascolta la frase">${spk}</button></div>`:""}
+   ${body}
+   <div class="fb" id="fb" aria-live="polite"></div>
+   <button class="btn next" id="next">${S.n+1<tot?"Avanti →":"Vedi il risultato"}</button>`;
+  $("#back").addEventListener("click",back);
+  $(".say").addEventListener("click",()=>say(it.p));
+  $("#next").addEventListener("click",()=>{S.n++;S.n<tot?show():result()});
+  document.querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>pick(b)));
+  document.querySelectorAll(".tok").forEach(b=>b.addEventListener("click",()=>tap(b)));
+  const wf=$("#wf");if(wf){wf.addEventListener("submit",e=>{e.preventDefault();write()});$("#win").focus()}
+}
+const fbk=(cls,title,html)=>{const f=$("#fb");f.className="fb on "+cls;f.innerHTML=`<h4>${title}</h4><div>${html}</div>`};
+function finish(ok,it,answer){
+  S.done=true;const lv=L[it.lv];
+  if(ok){S.score+=S.tries===0?1:.5;fbk("ok",S.tries===0?"Esatto!":"Giusto, al secondo tentativo.",esc(it.w))}
+  else{S.wrong.push({it,answer});fbk("no","La risposta giusta è: "+esc(answer),esc(it.w))}
+  $("#next").classList.add("on");$("#next").focus();
+}
+function miss(it){
+  S.tries++;
+  if(S.tries===1){fbk("hint","Non ancora. Ecco un aiuto:",esc(it.h||L[it.lv].h));return false}
+  return true;
+}
+function pick(b){
+  if(S.done||b.disabled)return;const it=S.items[S.n],lv=L[it.lv],j=+b.dataset.j;
+  const label=lv.fixed?lv.opts[it.a]:it.o[it.a];
+  if(j===it.a){b.classList.add("good");document.querySelectorAll(".opt").forEach(x=>x.disabled=true);finish(true,it)}
+  else{b.classList.add("bad");b.disabled=true;if(miss(it)){document.querySelectorAll(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.j===it.a)x.classList.add("good")});finish(false,it,label)}}
+}
+function tap(b){
+  if(S.done||b.disabled)return;const it=S.items[S.n],n=+b.dataset.n;
+  const words=it.p.split(" ");
+  if(n===it.x){b.classList.add("good");b.textContent=words[n]+" → "+it.fix;finish(true,it)}
+  else{b.classList.add("bad");b.disabled=true;if(miss(it)){const g=document.querySelector(`.tok[data-n="${it.x}"]`);g.classList.add("good");g.textContent=words[it.x]+" → "+it.fix;finish(false,it,words[it.x]+" → "+it.fix)}}
+}
+const norm=s=>s.toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g," ").replace(/[.!?]+$/,"").trim();
+function write(){
+  if(S.done)return;const it=S.items[S.n],inp=$("#win"),v=norm(inp.value);if(!v)return;
+  if(it.a.map(norm).includes(v)){inp.style.borderColor="var(--ok)";inp.disabled=true;finish(true,it);return}
+  if(it.al&&it.al[v]&&S.tries===0){S.tries++;fbk("hint","Quasi!",esc(it.al[v]));inp.select();return}
+  inp.style.borderColor="var(--no)";
+  if(miss(it)){inp.disabled=true;finish(false,it,it.a[0])}else inp.select();
+}
+function result(){
+  const tot=S.items.length,pct=Math.round(S.score/tot*100),st=pct>=90?3:pct>=70?2:pct>=50?1:0;
+  P[S.lv]=Math.max(P[S.lv]||0,st);saveP();
+  const msg=st===3?"Ottimo lavoro: questo livello lo padroneggi.":st===2?"Buon lavoro. Rileggi gli errori qui sotto e riprova per la terza stella.":st===1?"Ci sei quasi. Ripassa la scheda e i trucchi, poi riprova.":"Ripassa la scheda e le 3 domande, poi riprova con calma: migliorerai.";
+  const nx=S.lv+1<L.length;
+  $("#player").innerHTML=`<div class="res"><h2>${esc(L[S.lv].t)}</h2><div class="big">${pct}%</div>${stars(st)}<p>${msg}</p>
+   <div class="inrow" style="justify-content:center"><button class="btn ghost" id="again">Ripeti</button>${nx?`<button class="btn" id="nx">Livello successivo →</button>`:""}<button class="btn ghost" id="back">Tutti i livelli</button></div></div>
+   ${S.wrong.length?`<div class="rev"><h3>Da ripassare</h3><ol>${S.wrong.map(w=>`<li><b>${fmt(w.it.p)}</b><br>Risposta: ${esc(w.answer)}. <span class="muted">${esc(w.it.w)}</span></li>`).join("")}</ol></div>`:""}`;
+  $("#again").addEventListener("click",()=>start(S.lv));
+  $("#back").addEventListener("click",back);
+  if(nx)$("#nx").addEventListener("click",()=>start(S.lv+1));
+}
+function back(){try{speechSynthesis.cancel()}catch(e){}$("#player").hidden=true;$("#menu").hidden=false;menu()}
+document.addEventListener("keydown",e=>{
+  if(!S||$("#player").hidden||e.target.tagName==="INPUT")return;
+  const n=+e.key;if(n>=1&&n<=4){const b=document.querySelectorAll(".opt")[n-1];if(b)pick(b)}
+});
+
+/* ---------- routing & a11y tools ---------- */
+const route=()=>{const h=(location.hash||"#scheda").slice(1),id=["scheda","trucchi","allenati"].includes(h)?h:"scheda";
+  document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("on",s.id===id));
+  document.querySelectorAll("nav a").forEach(a=>{if(a.getAttribute("href")==="#"+id)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  scrollTo(0,0)};
+addEventListener("hashchange",route);route();
+let fs=18;const setFs=v=>{fs=Math.min(26,Math.max(15,v));document.documentElement.style.setProperty("--fs",fs+"px")};
+$("#bigger").addEventListener("click",()=>setFs(fs+2));$("#smaller").addEventListener("click",()=>setFs(fs-2));
+$("#space").addEventListener("click",e=>{const on=document.body.classList.toggle("spaced");e.currentTarget.setAttribute("aria-pressed",on)});
+menu();
+}
+</script>
+</body>
+</html>
